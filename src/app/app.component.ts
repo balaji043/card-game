@@ -16,7 +16,7 @@ export class AppComponent {
   matchOver = false;
   matchForm = this.fb.group(
     {
-      target: [null, [Validators.required, Validators.min(1), Validators.max(100)]],
+      target: [null, [Validators.required, Validators.min(1), Validators.max(1000)]],
       numberOfPlayers: [null, [Validators.required, Validators.min(2), Validators.max(10)]],
       players: this.fb.array([])
     }
