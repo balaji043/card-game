@@ -5,12 +5,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StorageServiceModule } from 'ngx-webstorage-service';
-import { SinglePlayerComponent } from './single-player/single-player.component';
 
 @NgModule({
    declarations: [
-      AppComponent,
-      SinglePlayerComponent
+      AppComponent
    ],
    imports: [
       BrowserModule,
