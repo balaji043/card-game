@@ -11,7 +11,7 @@ import { FormBuilder, Validators, FormArray } from '@angular/forms';
 export class AppComponent {
 
   stage: number;
-  buttonText = ['Next', 'Start Match', '', 'Start a new Match'];
+  buttonText = ['Next', 'Start Match', 'Add score', 'Start a new Match'];
   playerWon: string;
   matchOver = false;
   matchForm = this.fb.group(
@@ -56,6 +56,7 @@ export class AppComponent {
         break;
       }
       case 3: {
+        this.onScoreAdded();
         break;
       }
       case 4: {
@@ -65,10 +66,19 @@ export class AppComponent {
         break;
     }
   }
+
   public onScoreAdded(): void {
     let playerLostCount = 0;
     let player;
     this.players.controls.forEach(e => {
+      const score = e.get('currentRoundScore').value;
+      if (score !== null && score !== undefined) {
+        e.get('totalScore').setValue(score + e.get('totalScore').value);
+        e.get('currentRoundScore').setValue(0);
+      }
+      if (e.get('totalScore').value >= this.target.value) {
+        e.get('playerLost').setValue(true);
+      }
       if (e.get('playerLost').value) {
         playerLostCount++;
       } else {
@@ -76,7 +86,12 @@ export class AppComponent {
       }
     });
     if (playerLostCount === this.numberOfPlayers.value - 1) {
-      this.playerWon = player.get('name').value;
+      this.playerWon = 'Player ' + player.get('name').value + ' has won the match';
+      this.matchOver = true;
+      this.stage = 4;
+    }
+    if (playerLostCount === this.numberOfPlayers.value) {
+      this.playerWon = ' Match is tied';
       this.matchOver = true;
       this.stage = 4;
     }

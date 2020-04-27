@@ -1,5 +1,7 @@
 <div class="jumbotron">
-  <div class="container"><h1>Welcome to card game.</h1></div>
+  <div class="container center">
+    <h1>Welcome to card game.</h1>
+  </div>
   <div [formGroup]="matchForm"
        *ngIf="!matchOver">
     <div class="container"
@@ -44,12 +46,7 @@
           </div>
         </div>
       </div>
-      <div>
-        <button *ngIf="stage!==3"
-                type="button"
-                class="btn btn-primary"
-                (click)="onClickOfMatchStartButton()">{{buttonText[stage-1]}}</button>
-      </div>
+    
     </div>
 
     <div class="container"
@@ -62,34 +59,33 @@
                          *ngFor="let player of players.controls;let i=index"
                          (scoreAdded)="onScoreAdded()"
                          [(singlePlayerForm)]="player"></app-single-player>
-      <div>
-        <button *ngIf="stage!==3"
-                type="button"
-                class="btn btn-primary"
-                (click)="onClickOfMatchStartButton()">{{buttonText[stage-1]}}</button>
-      </div>
+      
+    </div>
+    <div class="container right">
+      <button type="button right"
+              class="btn btn-primary"
+              (click)="onClickOfMatchStartButton()">{{buttonText[stage-1]}}</button>
     </div>
 
   </div>
-  <div *ngIf="matchOver">
-    <div class="container row">
-      <h6> !!!!   Hurray   !!!!! </h6>
-      <h6>Player {{playerWon}} has won the match</h6>
+  <div class="container"
+       *ngIf="matchOver">
+    <div class="center">
+      <h6> !!!! Hurray !!!!! </h6>
+      <h6>{{playerWon}}</h6>
     </div>
-    <div class="container">
-      <p>Want to start a new match?</p>
-      <div class="row">
+    <p class="center">Want to start a new match?</p>
+    <div class="row">
 
-        <div class="col-6">
-          <button type="button"
-                  class="btn btn-primary"
-                  (click)="onNewMatch(1)">New match</button>
-        </div>
-        <div class="col-6">
-          <button type="button"
-                  class="btn btn-primary"
-                  (click)="onNewMatch(2)">Continue with current settings</button>
-        </div>
+      <div class="col-6 center">
+        <button type="button"
+                class="btn btn-primary"
+                (click)="onNewMatch(1)">New match</button>
+      </div>
+      <div class="col-6 center">
+        <button type="button"
+                class="btn btn-primary"
+                (click)="onNewMatch(2)">Continue with current settings</button>
       </div>
     </div>
 
