@@ -16,7 +16,5 @@ export class MatchService {
     this.storage.clear();
   }
 
-  private setMatch(match: Match): void {
-    this.storage.set(STORAGE_KEY, match);
-  }
+
 }
