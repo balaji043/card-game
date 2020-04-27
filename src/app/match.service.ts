@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
 import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
-import { Match } from './match.model';
 
 const STORAGE_KEY = 'MATCH';
 
