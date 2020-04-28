@@ -31,7 +31,7 @@
         </div>
         <!-- #endregion -->
 
-        <!-- #region  -->
+        <!-- #region No of Players input -->
         <div class="form-group">
           <label>No of players:</label>
           <input type="number"
@@ -53,6 +53,7 @@
       <div *ngSwitchCase="MatchStage.PLAYER_NAMES">
         <div *ngFor="let item of players.controls;let i=index;"
              formArrayName="players">
+          <!-- #region Player Names Input -->
           <div class="form-group"
                [formGroupName]="i">
             <label>Player {{i+1}} name</label>
@@ -65,6 +66,7 @@
               </div>
             </div>
           </div>
+          <!-- #endregion -->
         </div>
       </div>
       <!-- #endregion -->
@@ -78,6 +80,7 @@
              formArrayName="players">
           <div class="form-group"
                [formGroupName]="i">
+            <!-- #region Player current round score Input -->
             <div *ngIf="!getFC('playerLost', i).value">
               <div class="clearfix">
                 <h5 class="float-left">{{getFC('name', i).value}}</h5>
@@ -101,6 +104,7 @@
                 </div>
               </div>
             </div>
+            <!-- #endregion -->
             <h6 *ngIf="getFC('playerLost', i).value">
               Player {{getFC('name', i).value}} has been
               eliminated.Score[{{getFC('totalScore', i).value}}]
@@ -112,7 +116,7 @@
 
       <!-- #region stage 4 -->
       <div *ngSwitchCase="MatchStage.OVER">
-        <div >
+        <div>
           <h3 class="mx-auto fit-content p-3"> !!!! Hurray !!!!! </h3>
           <h2 class="mx-auto fit-content p-3">{{resultMessage}}</h2>
         </div>
