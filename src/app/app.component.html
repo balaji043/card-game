@@ -10,7 +10,7 @@
   <!-- #region match in progress -->
   <div class="container">
 
-    <div [ngSwitch]="matchStage"
+    <div [ngSwitch]="matchStage.value"
          [formGroup]="matchForm">
 
       <!-- #region stage 1 -->
@@ -61,8 +61,8 @@
                    class="form-control"
                    formControlName="name">
             <div class="alert alert-danger"
-                 *ngIf="getFC('name', i).invalid && (getFC('name', i).dirty || getFC('name', i).touched)">
-              <div *ngIf="getFC('name', i).errors.required">Player Name is required.
+                 *ngIf="getFG('name', i).invalid && (getFG('name', i).dirty || getFG('name', i).touched)">
+              <div *ngIf="getFG('name', i).errors.required">Player Name is required.
               </div>
             </div>
           </div>
@@ -74,19 +74,19 @@
       <!-- #region stage 3 -->
       <div *ngSwitchCase="MatchStage.SCORES">
         <div class="container mx-auto fit-content pb-5">
-          <h3>Round {{round}}</h3>
+          <h3>Round {{round.value}}</h3>
         </div>
         <div *ngFor="let item of players.controls;let i=index;"
              formArrayName="players">
           <div class="form-group"
                [formGroupName]="i">
             <!-- #region Player current round score Input -->
-            <div *ngIf="!getFC('playerLost', i).value">
+            <div *ngIf="!getFG('playerLost', i).value">
               <div class="clearfix">
-                <h5 class="float-left">{{getFC('name', i).value}}</h5>
+                <h5 class="float-left">{{getFG('name', i).value}}</h5>
                 <h5 class="float-right">
                   <strong>
-                    {{getFC('totalScore', i).value}}
+                    {{getFG('totalScore', i).value}}
                   </strong>
                   points
                 </h5>
@@ -96,18 +96,18 @@
                        class="form-control"
                        formControlName="currentRoundScore">
                 <div class="alert alert-danger"
-                     *ngIf="getFC('currentRoundScore', i).invalid 
-                       && (getFC('currentRoundScore', i).dirty 
-                       || getFC('currentRoundScore', i).touched)">
-                  <div *ngIf="getFC('currentRoundScore', i).errors.required"> Current score is required.
+                     *ngIf="getFG('currentRoundScore', i).invalid 
+                       && (getFG('currentRoundScore', i).dirty 
+                       || getFG('currentRoundScore', i).touched)">
+                  <div *ngIf="getFG('currentRoundScore', i).errors.required"> Current score is required.
                   </div>
                 </div>
               </div>
             </div>
             <!-- #endregion -->
-            <h6 *ngIf="getFC('playerLost', i).value">
-              Player {{getFC('name', i).value}} has been
-              eliminated.Score[{{getFC('totalScore', i).value}}]
+            <h6 *ngIf="getFG('playerLost', i).value">
+              Player {{getFG('name', i).value}} has been
+              eliminated.Score[{{getFG('totalScore', i).value}}]
             </h6>
           </div>
         </div>
@@ -117,8 +117,12 @@
       <!-- #region stage 4 -->
       <div *ngSwitchCase="MatchStage.OVER">
         <div>
-          <h3 class="mx-auto fit-content p-3"> !!!! Hurray !!!!! </h3>
-          <h2 class="mx-auto fit-content p-3">{{resultMessage}}</h2>
+          <h3 *ngIf="!isDrawn.value"
+              class="mx-auto fit-content p-3"> !!!! Hurray !!!!! </h3>
+          <h2 class="alert mx-auto fit-content p-3"
+              [ngClass]="{'alert-success':!isDrawn.value, 'alert-info':isDrawn.value}">
+            {{resultMessage.value}}
+          </h2>
         </div>
         <p class="mx-auto fit-content p-3">Want to play again?</p>
         <div class="clearfix">
@@ -138,11 +142,11 @@
       <!-- #endregion -->
     </div>
 
-    <div *ngIf="matchStage !== MatchStage.OVER"
+    <div *ngIf="matchStage.value !== MatchStage.OVER"
          class="float-right">
       <button type="button float-right"
               class="btn btn-primary"
-              (click)="onClickOfMatchButton()">{{buttonText[matchStage]}}</button>
+              (click)="onClickOfMatchButton()">{{buttonText[matchStage.value]}}</button>
     </div>
 
   </div>

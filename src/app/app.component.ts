@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators, FormArray } from '@angular/forms';
+import { FormBuilder, Validators, FormArray, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -13,19 +13,20 @@ export class AppComponent {
 
   buttonText = { TARGET_AND_NO_OF_PLAYERS: 'Next', PLAYER_NAMES: 'Start Match', SCORES: 'Add score' };
 
-  matchStage: string;
-  resultMessage: string;
-  round: number;
 
   matchForm = this.fb.group({
     target: [null, [Validators.required, Validators.min(1), Validators.max(1000)]],
     numberOfPlayers: [null, [Validators.required, Validators.min(2), Validators.max(10)]],
-    players: this.fb.array([])
+    players: this.fb.array([]),
+    matchStage: [],
+    resultMessage: [],
+    round: [1],
+    isDrawn: [false]
   });
 
   constructor(private fb: FormBuilder) {
-    this.matchStage = MatchStage.TARGET_AND_NO_OF_PLAYERS;
-    this.round = 1;
+    this.matchStage.setValue(MatchStage.TARGET_AND_NO_OF_PLAYERS);
+    this.round.setValue(1);
   }
 
   public onClickOfMatchButton(): void {
@@ -33,7 +34,7 @@ export class AppComponent {
     if (!this.matchForm.valid) {
       return;
     }
-    switch (this.matchStage) {
+    switch (this.matchStage.value) {
       case MatchStage.TARGET_AND_NO_OF_PLAYERS: {
         this.whenStageIsTARGET_AND_NO_OF_PLAYERS();
         break;
@@ -61,18 +62,18 @@ export class AppComponent {
         playerLost: [false]
       }));
     }
-    this.matchStage = MatchStage.PLAYER_NAMES;
+    this.matchStage.setValue(MatchStage.PLAYER_NAMES);
   }
 
   private whenStageIsPLAYER_NAMES() {
-    this.matchStage = MatchStage.SCORES;
+    this.matchStage.setValue(MatchStage.SCORES);
     this.players.controls.forEach(e => {
       e.get('currentRoundScore').setValidators(Validators.required);
     });
   }
 
   private whenStageIsSCORES(): void {
-    this.round++;
+    this.round.setValue(this.round.value + 1);
     let playerLostCount = 0;
     let player;
     this.players.controls.forEach(e => {
@@ -91,24 +92,26 @@ export class AppComponent {
       }
     });
     if (playerLostCount === this.numberOfPlayers.value - 1) {
-      this.resultMessage = 'Player ' + player.get('name').value + ' has won the match';
-      this.matchStage = MatchStage.OVER;
+      this.resultMessage.setValue('Player ' + player.get('name').value + ' has won the match');
+      this.matchStage.setValue(MatchStage.OVER);
+      this.isDrawn.setValue(false);
     }
     if (playerLostCount === this.numberOfPlayers.value) {
-      this.resultMessage = ' Match is tied';
-      this.matchStage = MatchStage.OVER;
+      this.resultMessage.setValue(' Match is tied');
+      this.matchStage.setValue(MatchStage.OVER);
+      this.isDrawn.setValue(true);
     }
   }
 
   public onClickOfNextMatchButton(nextMatch: string): void {
-    this.round = 0;
+    this.round.setValue(1);
     if (nextMatch === NextMatch.NEW_MATCH) {
       this.matchForm.reset();
       this.players.clear();
-      this.matchStage = MatchStage.TARGET_AND_NO_OF_PLAYERS;
+      this.matchStage.setValue(MatchStage.TARGET_AND_NO_OF_PLAYERS);
     }
     if (nextMatch === NextMatch.OLD_MATCH) {
-      this.matchStage = MatchStage.SCORES;
+      this.matchStage.setValue(MatchStage.SCORES);
       this.players.controls.forEach(e => {
         e.get('totalScore').setValue(0);
         e.get('playerLost').setValue(false);
@@ -116,13 +119,20 @@ export class AppComponent {
     }
   }
 
-  get target() { return this.matchForm.get('target'); }
-  get numberOfPlayers() { return this.matchForm.get('numberOfPlayers'); }
-  get players() {
-    return this.matchForm.get('players') as FormArray;
+  get target() { return this.getFC('target'); }
+  get numberOfPlayers() { return this.getFC('numberOfPlayers'); }
+  get matchStage() { return this.getFC('matchStage'); }
+  get round() { return this.getFC('round'); }
+  get resultMessage() { return this.getFC('resultMessage'); }
+  get isDrawn() { return this.getFC('isDrawn'); }
+
+  get players() { return this.getFC('players') as FormArray; }
+
+  public getFC(name: string) {
+    return this.matchForm.get(name);
   }
 
-  public getFC(name: string, index: number) {
+  public getFG(name: string, index: number) {
     return this.players.controls[index].get(name);
   }
 }
