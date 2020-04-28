@@ -28,7 +28,11 @@ export class AppComponent {
     this.round = 1;
   }
 
-  public onClickMatchButton(): void {
+  public onClickOfMatchButton(): void {
+    this.matchForm.markAllAsTouched();
+    if (!this.matchForm.valid) {
+      return;
+    }
     switch (this.matchStage) {
       case MatchStage.TARGET_AND_NO_OF_PLAYERS: {
         this.whenStageIsTARGET_AND_NO_OF_PLAYERS();
@@ -48,36 +52,26 @@ export class AppComponent {
   }
 
   private whenStageIsTARGET_AND_NO_OF_PLAYERS(): void {
-    this.matchForm.markAllAsTouched();
-    if (this.matchForm.valid) {
-      this.players.clear();
-      for (let index = 0; index < this.numberOfPlayers.value; index++) {
-        this.players.push(this.fb.group({
-          name: [null, Validators.required],
-          totalScore: [0],
-          currentRoundScore: [0],
-          playerLost: [false]
-        }));
-      }
-      this.matchStage = MatchStage.PLAYER_NAMES;
+    this.players.clear();
+    for (let index = 0; index < this.numberOfPlayers.value; index++) {
+      this.players.push(this.fb.group({
+        name: [null, Validators.required],
+        totalScore: [0],
+        currentRoundScore: [0],
+        playerLost: [false]
+      }));
     }
+    this.matchStage = MatchStage.PLAYER_NAMES;
   }
 
   private whenStageIsPLAYER_NAMES() {
-    this.matchForm.markAllAsTouched();
-    if (this.matchForm.valid) {
-      this.matchStage = MatchStage.SCORES;
-      this.players.controls.forEach(e => {
-        e.get('currentRoundScore').setValidators(Validators.required);
-      });
-    }
+    this.matchStage = MatchStage.SCORES;
+    this.players.controls.forEach(e => {
+      e.get('currentRoundScore').setValidators(Validators.required);
+    });
   }
 
   private whenStageIsSCORES(): void {
-    if (!this.matchForm.valid) {
-      this.matchForm.markAllAsTouched();
-      return;
-    }
     this.round++;
     let playerLostCount = 0;
     let player;
@@ -106,7 +100,7 @@ export class AppComponent {
     }
   }
 
-  public onNewMatch(nextMatch: string): void {
+  public onClickOfNextMatchButton(nextMatch: string): void {
     this.round = 0;
     if (nextMatch === NextMatch.NEW_MATCH) {
       this.matchForm.reset();
@@ -128,6 +122,9 @@ export class AppComponent {
     return this.matchForm.get('players') as FormArray;
   }
 
+  public getFC(name: string, index: number) {
+    return this.players.controls[index].get(name);
+  }
 }
 export class MatchStatus {
   public static IN_PROGRESS = 'In-Progress';

@@ -1,153 +1,148 @@
-<div class="shadow-lg mt-5">
-  <!-- #region full region -->
-  <div class="jumbotron">
+<!-- #region full region -->
+<div class="jumbotron shadow-lg mt-5">
 
-    <!-- #region Welcome text -->
-    <div class="container center pb-5">
-      <h1>Welcome to Score board!</h1>
-    </div>
-    <!-- #endregion -->
+  <!-- #region Welcome text -->
+  <div class="container  pb-5">
+    <h1 class="mx-auto fit-content">Welcome to Score board!</h1>
+  </div>
+  <!-- #endregion -->
 
-    <!-- #region match in progress -->
-    <div class="container">
+  <!-- #region match in progress -->
+  <div class="container">
 
-      <div [ngSwitch]="matchStage"
-           [formGroup]="matchForm">
+    <div [ngSwitch]="matchStage"
+         [formGroup]="matchForm">
 
-        <!-- #region stage 1 -->
-        <div *ngSwitchCase="MatchStage.TARGET_AND_NO_OF_PLAYERS">
+      <!-- #region stage 1 -->
+      <div *ngSwitchCase="MatchStage.TARGET_AND_NO_OF_PLAYERS">
 
-          <!-- #region Target score input -->
-          <div class="form-group">
-            <label for="usr">Target score:</label>
-            <input type="number"
-                   class="form-control"
-                   formControlName="target">
-            <div class="alert alert-danger"
-                 *ngIf="target.invalid && (target.dirty || target.touched)">
-              <div *ngIf="target.errors.required"> Target score is required. </div>
-              <div *ngIf="target.errors.min"> Target score should be greater than 1. </div>
-              <div *ngIf="target.errors.max"> Target score should be lesser than 1000. </div>
-            </div>
+        <!-- #region Target score input -->
+        <div class="form-group">
+          <label>Target score:</label>
+          <input type="number"
+                 class="form-control"
+                 formControlName="target">
+          <div class="alert alert-danger"
+               *ngIf="target.invalid && (target.dirty || target.touched)">
+            <div *ngIf="target.errors.required"> Target score is required. </div>
+            <div *ngIf="target.errors.min"> Target score should be greater than 1. </div>
+            <div *ngIf="target.errors.max"> Target score should be lesser than 1000. </div>
           </div>
-          <!-- #endregion -->
-
-          <!-- #region  -->
-          <div class="form-group">
-            <label for="usr">No of players:</label>
-            <input type="number"
-                   class="form-control"
-                   formControlName="numberOfPlayers">
-            <div class="alert alert-danger"
-                 *ngIf="numberOfPlayers.invalid && (numberOfPlayers.dirty || numberOfPlayers.touched)">
-              <div *ngIf="numberOfPlayers.errors.required">No of players is required.</div>
-              <div *ngIf="numberOfPlayers.errors.min">No of players should be greater than 2.</div>
-              <div *ngIf="numberOfPlayers.errors.max"> No of players should be lesser than 10.</div>
-            </div>
-          </div>
-          <!-- #endregion -->
-
         </div>
         <!-- #endregion -->
 
-        <!-- #region stage 2 -->
-        <div *ngSwitchCase="MatchStage.PLAYER_NAMES">
-          <div *ngFor="let item of players.controls;let i=index;"
-               formArrayName="players">
-            <div class="form-group"
-                 [formGroupName]="i">
-              <label>Player {{i+1}} name</label>
-              <input type="text"
-                     class="form-control"
-                     formControlName="name">
-              <div class="alert alert-danger"
-                   *ngIf="players.controls[i].get('name').invalid 
-                   && (players.controls[i].get('name').dirty 
-                   || players.controls[i].get('name').touched)">
-                <div *ngIf="players.controls[i].get('name').errors.required">Player Name is required.
-                </div>
+        <!-- #region  -->
+        <div class="form-group">
+          <label>No of players:</label>
+          <input type="number"
+                 class="form-control"
+                 formControlName="numberOfPlayers">
+          <div class="alert alert-danger"
+               *ngIf="numberOfPlayers.invalid && (numberOfPlayers.dirty || numberOfPlayers.touched)">
+            <div *ngIf="numberOfPlayers.errors.required">No of players is required.</div>
+            <div *ngIf="numberOfPlayers.errors.min">No of players should be greater than 2.</div>
+            <div *ngIf="numberOfPlayers.errors.max"> No of players should be lesser than 10.</div>
+          </div>
+        </div>
+        <!-- #endregion -->
+
+      </div>
+      <!-- #endregion -->
+
+      <!-- #region stage 2 -->
+      <div *ngSwitchCase="MatchStage.PLAYER_NAMES">
+        <div *ngFor="let item of players.controls;let i=index;"
+             formArrayName="players">
+          <div class="form-group"
+               [formGroupName]="i">
+            <label>Player {{i+1}} name</label>
+            <input type="text"
+                   class="form-control"
+                   formControlName="name">
+            <div class="alert alert-danger"
+                 *ngIf="getFC('name', i).invalid && (getFC('name', i).dirty || getFC('name', i).touched)">
+              <div *ngIf="getFC('name', i).errors.required">Player Name is required.
               </div>
             </div>
           </div>
         </div>
-        <!-- #endregion -->
+      </div>
+      <!-- #endregion -->
 
-        <!-- #region stage 3 -->
-        <div *ngSwitchCase="MatchStage.SCORES">
-          <div class="container center pb-5">
-            <h3>Round {{round}}!</h3>
-          </div>
-          <div *ngFor="let item of players.controls;let i=index;"
-               formArrayName="players">
-            <div class="form-group"
-                 [formGroupName]="i">
-              <div *ngIf="!players.controls[i].get('playerLost').value">
-                <div class="row">
-                  <h5 class="col-6">{{players.controls[i].get('name').value}}</h5>
-                  <h5 class="col-6 right">
-                    <strong>
-                      {{players.controls[i].get('totalScore').value}}
-                    </strong>
-                    points
-                  </h5>
-                </div>
-                <div class="form-group">
-                  <input type="number"
-                         class="form-control"
-                         formControlName="currentRoundScore">
-                  <div class="alert alert-danger"
-                       *ngIf="players.controls[i].get('currentRoundScore').invalid 
-                       && (players.controls[i].get('currentRoundScore').dirty 
-                       || players.controls[i].get('currentRoundScore').touched)">
-                    <div *ngIf="players.controls[i].get('currentRoundScore').errors.required"> Target score is required.
-                    </div>
+      <!-- #region stage 3 -->
+      <div *ngSwitchCase="MatchStage.SCORES">
+        <div class="container mx-auto fit-content pb-5">
+          <h3>Round {{round}}!</h3>
+        </div>
+        <div *ngFor="let item of players.controls;let i=index;"
+             formArrayName="players">
+          <div class="form-group"
+               [formGroupName]="i">
+            <div *ngIf="!getFC('playerLost', i).value">
+              <div class="clearfix">
+                <h5 class="float-left">{{getFC('name', i).value}}</h5>
+                <h5 class="float-right">
+                  <strong>
+                    {{getFC('totalScore', i).value}}
+                  </strong>
+                  points
+                </h5>
+              </div>
+              <div class="form-group">
+                <input type="number"
+                       class="form-control"
+                       formControlName="currentRoundScore">
+                <div class="alert alert-danger"
+                     *ngIf="getFC('currentRoundScore', i).invalid 
+                       && (getFC('currentRoundScore', i).dirty 
+                       || getFC('currentRoundScore', i).touched)">
+                  <div *ngIf="getFC('currentRoundScore', i).errors.required"> Current score is required.
                   </div>
                 </div>
               </div>
-              <h6 *ngIf="players.controls[i].get('playerLost').value">
-                Player {{players.controls[i].get('name').value}} has been
-                eliminated.Score[{{players.controls[i].get('totalScore').value}}]
-              </h6>
             </div>
+            <h6 *ngIf="getFC('playerLost', i).value">
+              Player {{getFC('name', i).value}} has been
+              eliminated.Score[{{getFC('totalScore', i).value}}]
+            </h6>
           </div>
         </div>
-        <!-- #endregion -->
+      </div>
+      <!-- #endregion -->
 
-        <!-- #region stage 4 -->
-        <div *ngSwitchCase="MatchStage.OVER">
-          <div class="center">
-            <h6> !!!! Hurray !!!!! </h6>
-            <h6>{{resultMessage}}</h6>
+      <!-- #region stage 4 -->
+      <div *ngSwitchCase="MatchStage.OVER">
+        <div >
+          <h3 class="mx-auto fit-content"> !!!! Hurray !!!!! </h3>
+          <h2 class="mx-auto fit-content">{{resultMessage}}</h2>
+        </div>
+        <p class="mx-auto fit-content">Want to play again?</p>
+        <div class="clearfix">
+
+          <div class="float-left">
+            <button type="button"
+                    class="btn btn-primary"
+                    (click)="onClickOfNextMatchButton(NextMatch.NEW_MATCH)">Start a New Match</button>
           </div>
-          <p class="center">Want to play again?</p>
-          <div class="row">
-
-            <div class="col-6 center">
-              <button type="button"
-                      class="btn btn-primary"
-                      (click)="onNewMatch(NextMatch.NEW_MATCH)">Start a New Match</button>
-            </div>
-            <div class="col-6 center">
-              <button type="button"
-                      class="btn btn-primary"
-                      (click)="onNewMatch(NextMatch.OLD_MATCH)">Continue with current data</button>
-            </div>
+          <div class="float-right">
+            <button type="button"
+                    class="btn btn-primary"
+                    (click)="onClickOfNextMatchButton(NextMatch.OLD_MATCH)">Continue with current data</button>
           </div>
         </div>
-        <!-- #endregion -->
       </div>
-
-      <div *ngIf="matchStage !== MatchStage.OVER"
-           class="right">
-        <button type="button right"
-                class="btn btn-primary"
-                (click)="onClickMatchButton()">{{buttonText[matchStage]}}</button>
-      </div>
-
+      <!-- #endregion -->
     </div>
-    <!-- #endregion -->
+
+    <div *ngIf="matchStage !== MatchStage.OVER"
+         class="float-right">
+      <button type="button float-right"
+              class="btn btn-primary"
+              (click)="onClickOfMatchButton()">{{buttonText[matchStage]}}</button>
+    </div>
 
   </div>
   <!-- #endregion -->
 
 </div>
+<!-- #endregion -->
